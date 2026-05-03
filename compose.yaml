@@ -1,0 +1,21 @@
+services:
+  postgres:
+    container_name: postgres
+    image: dhi.io/postgres:18-alpine3.22
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    container_name: redis
+    image: dhi.io/redis:8
+    ports:
+      - "6379:6379"
+
+volumes:
+  postgres_data:

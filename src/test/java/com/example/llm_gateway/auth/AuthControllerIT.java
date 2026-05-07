@@ -9,6 +9,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -22,6 +25,7 @@ import org.testcontainers.utility.DockerImageName;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
 class AuthControllerIT {
+
   @Container @ServiceConnection
   static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:18-alpine3.22");
 
@@ -69,7 +73,7 @@ class AuthControllerIT {
             url("/v1/auth/login"),
             Map.of("email", "carol@acme.test", "password", "wrongpass"),
             Map.class);
-    System.out.println("STATUS: " + resp.getStatusCode());                                                                                                                                            
+    System.out.println("STATUS: " + resp.getStatusCode());
     System.out.println("BODY: " + resp.getBody());
     assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
   }
@@ -88,11 +92,13 @@ class AuthControllerIT {
     assertThat(second.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
   }
 
-  private ResponseEntity<Map> signup(String email, String password, String orgName) {
-    return rest.postForEntity(
+  private ResponseEntity<Map<String, Object>> signup(
+      String email, String password, String orgName) {
+    return rest.exchange(
         url("/v1/auth/signup"),
-        Map.of("orgName", orgName, "email", email, "password", password),
-        Map.class);
+        HttpMethod.POST,
+        new HttpEntity<>(Map.of("orgName", orgName, "email", email, "password", password)),
+        new ParameterizedTypeReference<Map<String, Object>>() {});
   }
 
   private String url(String path) {

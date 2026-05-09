@@ -55,10 +55,11 @@ class AuthControllerIT {
     signup("bob@acme.test", "password1", "AcmeTwo");
 
     var resp =
-        rest.postForEntity(
+        rest.exchange(
             url("/v1/auth/login"),
-            Map.of("email", "bob@acme.test", "password", "password1"),
-            Map.class);
+            HttpMethod.POST,
+            new HttpEntity<>(Map.of("email", "bob@acme.test", "password", "password1")),
+            new ParameterizedTypeReference<Map<String, Object>>() {});
 
     assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(resp.getBody()).containsKeys("accessToken", "refreshToken");
@@ -73,8 +74,7 @@ class AuthControllerIT {
             url("/v1/auth/login"),
             Map.of("email", "carol@acme.test", "password", "wrongpass"),
             Map.class);
-    System.out.println("STATUS: " + resp.getStatusCode());
-    System.out.println("BODY: " + resp.getBody());
+
     assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
   }
 

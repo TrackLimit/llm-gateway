@@ -14,3 +14,6 @@ gateway:
     secret: ${GATEWAY_JWT_SECRET:dev-only-secret-replace-in-prod-min-32-chars-long}
     access-ttl: PT15M
     refresh-ttl: P7D
+  providers:
+    gemini:
+      api-key: ${GATEWAY_GEMINI_API_KEY:}

@@ -39,7 +39,10 @@ CREATE TABLE usage_logs
     prompt_tokens     INT          NOT NULL,
     completion_tokens INT          NOT NULL,
     latency_ms        INT          NOT NULL,
-    created_at        TIMESTAMPTZ  NOT NULL DEFAULT NOW()
+    created_at        TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+    CONSTRAINT chk_usage_prompt_tokens_non_negative CHECK (prompt_tokens >= 0),
+    CONSTRAINT chk_usage_completion_tokens_non_negative CHECK (completion_tokens >= 0),
+    CONSTRAINT chk_usage_latency_ms_non_negative CHECK (latency_ms >= 0)
 );
 
 CREATE INDEX idx_usage_logs_key_time ON usage_logs (api_key_id, created_at DESC);

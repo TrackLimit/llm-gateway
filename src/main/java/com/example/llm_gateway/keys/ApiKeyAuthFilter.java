@@ -28,6 +28,9 @@ public class ApiKeyAuthFilter extends OncePerRequestFilter {
   protected void doFilterInternal(
       HttpServletRequest req, HttpServletResponse res, FilterChain chain)
       throws ServletException, IOException {
+    // Prevent cross-scheme auth (e.g., JWT) from leaking onto completion routes
+    SecurityContextHolder.clearContext();
+
     var header = req.getHeader("Authorization");
     if (header == null || !header.startsWith("Bearer ")) {
       chain.doFilter(req, res);

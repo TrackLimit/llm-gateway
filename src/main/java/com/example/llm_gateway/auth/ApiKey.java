@@ -25,7 +25,7 @@ public class ApiKey {
   @Column(name = "key_hash", nullable = false, unique = true)
   private String keyHash;
 
-  @Column(name = "key_prefix", nullable = false)
+  @Column(name = "key_prefix", nullable = false, length = 16)
   private String keyPrefix;
 
   @Column(nullable = false)

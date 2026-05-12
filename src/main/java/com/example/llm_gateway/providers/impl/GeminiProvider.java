@@ -1,9 +1,11 @@
 package com.example.llm_gateway.providers.impl;
 
 import com.example.llm_gateway.providers.LlmProvider;
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
@@ -16,7 +18,12 @@ public class GeminiProvider implements LlmProvider {
 
   public GeminiProvider(@Value("${gateway.providers.gemini.api-key}") String apiKey) {
     this.apiKey = apiKey;
-    this.client = RestClient.builder().baseUrl(BASE_URL).build();
+
+    var requestFactory = new SimpleClientHttpRequestFactory();
+    requestFactory.setConnectTimeout(Duration.ofSeconds(5));
+    requestFactory.setReadTimeout(Duration.ofSeconds(60));
+
+    this.client = RestClient.builder().baseUrl(BASE_URL).requestFactory(requestFactory).build();
   }
 
   @Override

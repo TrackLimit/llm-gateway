@@ -32,7 +32,7 @@ public class ApiKeyAuthFilter extends OncePerRequestFilter {
     SecurityContextHolder.clearContext();
 
     var header = req.getHeader("Authorization");
-    if (header == null || !header.startsWith("Bearer ")) {
+    if (header == null || !header.regionMatches(true, 0, "Bearer ", 0, 7)) {
       chain.doFilter(req, res);
       return;
     }

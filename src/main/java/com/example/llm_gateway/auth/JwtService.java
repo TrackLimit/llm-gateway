@@ -3,6 +3,7 @@ package com.example.llm_gateway.auth;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
@@ -18,7 +19,7 @@ public class JwtService {
   public JwtService(
       @Value("${gateway.jwt.secret}") String secret,
       @Value("${gateway.jwt.access-ttl}") Duration accessTtl) {
-    this.key = Keys.hmacShaKeyFor(secret.getBytes());
+    this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     this.accessTtl = accessTtl;
   }
 

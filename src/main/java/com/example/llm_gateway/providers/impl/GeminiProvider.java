@@ -53,9 +53,20 @@ public class GeminiProvider implements LlmProvider {
             .retrieve()
             .body(GeminiResponse.class);
 
-    var text = resp.candidates().get(0).content().parts().get(0).text();
-    return new CompletionResult(
-        text, resp.usageMetadata().promptTokenCount(), resp.usageMetadata().candidatesTokenCount());
+    if (resp == null || resp.candidates() == null || resp.candidates().isEmpty()) {
+      throw new IllegalStateException("Gemini returned no candidates (likely safety-blocked)");
+    }
+    var content = resp.candidates().get(0).content();
+    if (content == null || content.parts() == null || content.parts().isEmpty()) {
+      throw new IllegalStateException("Gemini candidate has no content parts");
+    }
+    var usage = resp.usageMetadata();
+    if (usage == null) {
+      throw new IllegalStateException("Gemini response missing usage metadata");
+    }
+
+    var text = content.parts().get(0).text();
+    return new CompletionResult(text, usage.promptTokenCount(), usage.candidatesTokenCount());
   }
 
   record GeminiResponse(List<Candidate> candidates, UsageMetadata usageMetadata) {}

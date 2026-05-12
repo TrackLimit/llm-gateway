@@ -45,7 +45,9 @@ public class ApiKey {
   }
 
   public void revoke() {
-    this.revokedAt = Instant.now();
+    if (this.revokedAt == null) {
+      this.revokedAt = Instant.now();
+    }
   }
 
   public boolean isActive() {
